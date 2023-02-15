@@ -8,6 +8,10 @@ function M.get_nvim_remote_editor()
   local neogit_path = debug.getinfo(1, "S").source:sub(2, -#"lua/neogit/client.lua" - 2)
   local nvim_path = fn.shellescape(vim.v.progpath)
 
+  if not vim.env.NEOGIT_REMOTE then
+      vim.env.NEOGIT_REMOTE = fn.serverstart()
+  end
+
   local runtimepath_cmd = fn.shellescape(fmt("set runtimepath^=%s", fn.fnameescape(tostring(neogit_path))))
   local lua_cmd = fn.shellescape('lua require("neogit.client").client()')
 
@@ -38,9 +42,9 @@ end
 --- Entry point for the headless client.
 --- Starts a server and connects to the parent process rpc, opening an editor
 function M.client()
-  local nvim_server = vim.env.NVIM
+  local nvim_server = vim.env.NEOGIT_REMOTE
   if not nvim_server then
-    error("NVIM server address not set")
+    error("NEOGIT_REMOTE server address not set")
   end
 
   local file_target = fn.fnamemodify(fn.argv()[1], ":p")

@@ -31,6 +31,11 @@ end
 
 function M:open()
   local written = false
+
+  if self.buffer then
+      self.buffer:focus()
+  end
+
   self.buffer = Buffer.create {
     name = self.filename,
     filetype = "NeogitCommitMessage",
@@ -62,6 +67,11 @@ function M:open()
         end
 
         require("neogit.process").defer_show_preview_buffers()
+      end,
+      ["BufLeave"] = function()
+        if config.values.commit_popup.kind == "floating" then
+          self.buffer:hide(true)
+        end
       end,
     },
     mappings = {

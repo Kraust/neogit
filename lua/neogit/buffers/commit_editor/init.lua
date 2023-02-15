@@ -70,7 +70,7 @@ function M:open()
       end,
       ["BufLeave"] = function()
         if config.values.commit_popup.kind == "floating" then
-          self.buffer:hide(true)
+          self.buffer:hide()
         end
       end,
     },
